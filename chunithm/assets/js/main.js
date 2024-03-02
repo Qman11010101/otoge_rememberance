@@ -7,7 +7,7 @@ const musicsData = musicsDataRaw.map((m) => {
     return m.meta.genre === "ORIGINAL" || m.meta.genre === "イロドリミドリ" ? {
         title: m.meta.title,
         artist: m.meta.artist,
-        jacket: "../../commonassets/img/unknown.png",
+        jacket: "../commonassets/img/unknown.png",
         lev_mas: m.data.MAS.const,
         found: false
     } : null
@@ -42,6 +42,29 @@ const inputArea = () => div(
     ),
 )
 
+const timer = () => {
+    const spentTime = van.state(0)
+    let id
+    const start = () => {
+        id = setInterval(() => {
+            spentTime.value++
+        }, 10)
+    }
+    const stop = () => {
+        clearInterval(id)
+    }
+
+    return div(
+        spentTime.val,
+        button({ onclick: start }, "start"),
+    )
+}
+
+const displayArea = () => div(
+    { class: "display-area" },
+    timer()
+)
+
 const songsArea = () => {
     let songs = []
     for (let i = 0; i < musicsData.length; i++) {
@@ -65,6 +88,7 @@ const songsArea = () => {
 const app = section(
     { id: "main-play-area" },
     inputArea(),
+    displayArea(),
     songsArea()
 )
 

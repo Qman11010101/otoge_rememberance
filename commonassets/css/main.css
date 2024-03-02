@@ -76,6 +76,13 @@ button {
     }
 }
 
+.display-area {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px;
+}
+
 .songs-area {
     display: flex;
     flex-wrap: wrap;
