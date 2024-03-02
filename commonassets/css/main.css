@@ -1,0 +1,75 @@
+/* origin tags */
+
+body {
+    font-family: "Noto Sans", "Noto Sans JP", sans-serif;
+    background-color: #edefff;
+    margin: 10px;
+    line-height: 1.8;
+}
+
+h1 {
+    width: fit-content;
+    font-weight: bold;
+    font-size: 2rem;
+    margin: 30px auto 0;
+}
+
+p {
+    width: fit-content;
+    margin: 5px auto 0;
+}
+
+a {
+    text-decoration: underline;
+    color: #0d7000;
+
+    &:hover {
+        color: #073d00;
+        text-decoration: none;
+    }
+
+    &:visited {
+        color: #670070;
+    }
+}
+
+input {
+    display: block;
+    border: 1px solid #999;
+    padding: 0 10px;
+    border-radius: 10px;
+    background-color: #fff;
+
+    &::placeholder {
+        color: #777;
+    }
+}
+
+button {
+    display: block;
+    padding: 5px 10px;
+    border: 1px solid #999;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+/* component */
+
+.input-area {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px;
+}
+
+#answer {
+    background-color: #00a767;
+    color: #fff;
+    font-weight: bold;
+    transition-duration: .2s;
+
+    &:hover {
+        background-color: #007d4f;
+        transition-duration: .2s;
+    }
+}
