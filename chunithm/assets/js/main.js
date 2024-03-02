@@ -42,9 +42,12 @@ function stopTimer() {
 
 function search() {
     const songNameElm = document.getElementById("song-name")
+    let found = false
     for (let i = 0; i < musicsData.length; i++) {
         const songName = songNameElm.value
         if (musicsData[i].title === songName.normalize("NFKC")) {
+            found = true
+
             // musicsData書き換え
             musicsData[i].found = true
             const title = musicsData[i].title
@@ -80,12 +83,14 @@ function search() {
     }
 
     // ハズレ
-    songNameElm.style.backgroundColor = "rgba(255, 0, 0, 0.7)"
-    songNameElm.style.color = "white"
-    setTimeout(() => {
-        songNameElm.style.backgroundColor = "white"
-        songNameElm.style.color = "black"
-    }, 300)
+    if (!found) {
+        songNameElm.style.backgroundColor = "rgba(255, 0, 0, 0.7)"
+        songNameElm.style.color = "white"
+        setTimeout(() => {
+            songNameElm.style.backgroundColor = "white"
+            songNameElm.style.color = "black"
+        }, 300)
+    }
 }
 
 const inputArea = () => div(
@@ -147,7 +152,7 @@ function rewriteSongsArea() {
                     class: "music-jacket",
                     "data-title": musicsData[i].title,
                     "data-artist": musicsData[i].artist,
-                    "data-reading" : musicsData[i].reading,
+                    "data-reading": musicsData[i].reading,
                     src: musicsData[i].jacket,
                 }
             )
@@ -198,7 +203,7 @@ const songsArea = () => {
                     class: "music-jacket",
                     "data-title": musicsData[i].title,
                     "data-artist": musicsData[i].artist,
-                    "data-reading" : musicsData[i].reading,
+                    "data-reading": musicsData[i].reading,
                     src: musicsData[i].jacket,
                 }
             )
