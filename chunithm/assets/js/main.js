@@ -12,9 +12,26 @@ function reading(title) {
     }
 }
 
+function hiraToKana(str) {
+    return str.replace(/[\u3041-\u3096]/g, function(match) {
+        var chr = match.charCodeAt(0) + 0x60;
+        return String.fromCharCode(chr);
+    });
+}
+
+function superNormalize(str) {
+    // const segmenter = new Intl.Segmenter("ja", {granularity: "grapheme"})
+    // const seg = segmenter.segment(hiraToKana(str.normalize("NFKC").replace(/ /g, "").replace(/　/g, "").replace("ー", "ウ").toLowerCase()))
+    // for (let i = 0; i < seg.length; i++) {
+    //     seg[i].input = seg[i].input.normalize("NFD")[0]
+    // }
+    // return [...seg].join("")
+    return hiraToKana(str.normalize("NFKC").replace(/ /g, "").replace(/　/g, "").replace("ー", "ウ").toLowerCase())
+}
+
 const musicsData = musicsDataRaw.map((m) => {
     return m.meta.genre === "ORIGINAL" || m.meta.genre === "イロドリミドリ" ? {
-        title: m.meta.title.normalize("NFKC"),
+        title: m.meta.title,
         artist: m.meta.artist,
         reading: reading(m.meta.title),
         jacket: "../commonassets/img/unknown.png",
@@ -45,8 +62,18 @@ function search() {
     let found = false
     for (let i = 0; i < musicsData.length; i++) {
         const songName = songNameElm.value
-        if (musicsData[i].title === songName.normalize("NFKC")) {
+        console.log(musicsData[i], musicsData[i].found === false)
+        if (
+            musicsData[i].found === false && (
+                superNormalize(musicsData[i].title) === superNormalize(songName.normalize("NFKC")) ||
+                superNormalize(musicsData[i].reading) === superNormalize(songName.normalize("NFKC")) ||
+                (superNormalize(musicsData[i].reading).includes(superNormalize(songName.normalize("NFKC"))) && superNormalize(songName.normalize("NFKC")).length / superNormalize(musicsData[i].reading).length > 0.5) ||
+                (superNormalize(musicsData[i].title).includes(superNormalize(songName.normalize("NFKC"))) && superNormalize(songName.normalize("NFKC")).length / superNormalize(musicsData[i].title).length > 0.5)
+            )
+        ) {
             found = true
+
+            console.log("reach!", musicsData[i])
 
             // musicsData書き換え
             musicsData[i].found = true
