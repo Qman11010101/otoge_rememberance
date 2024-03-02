@@ -76,11 +76,34 @@ button {
     }
 }
 
+.display-big {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
 .display-area {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin: 20px;
+}
+
+.hint-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px;
+
+    > button {
+        background-color: #00a767;
+        color: #fff;
+        transition-duration: .2s;
+
+        &:hover {
+            background-color: #007d4f;
+            transition-duration: .2s;
+        }
+    }
 }
 
 .songs-area {
@@ -100,9 +123,4 @@ button {
     height: 80px;
     border-radius: 10px;
     object-fit: cover;
-}
-
-.display-big {
-    font-weight: bold;
-    font-size: 1.5rem;
 }

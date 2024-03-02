@@ -1,15 +1,24 @@
 import van from "../../../commonassets/js/van-1.3.0.min.js"
-import { musicsDataRaw, jacketURLbase } from "./constants.js"
+import { musicsDataRaw, jacketURLbase, officialMusicsData } from "./constants.js"
 import { timeText } from "./utils.js"
 
 const { button, div, img, input, section, span } = van.tags
 
+function reading(title) {
+    for (let i = 0; i < officialMusicsData.length; i++) {
+        if (officialMusicsData[i].title === title) {
+            return officialMusicsData[i].reading.replace(/ /g, "").replace(/　/g, "")
+        }
+    }
+}
+
 const musicsData = musicsDataRaw.map((m) => {
     return m.meta.genre === "ORIGINAL" || m.meta.genre === "イロドリミドリ" ? {
-        title: m.meta.title,
+        title: m.meta.title.normalize("NFKC"),
         artist: m.meta.artist,
+        reading: reading(m.meta.title),
         jacket: "../commonassets/img/unknown.png",
-        release: m.meta.release,
+        release: new Date(m.meta.release).getTime() / 1000,
         lev_mas: m.data.MAS.const,
         found: false
     } : null
@@ -32,9 +41,10 @@ function stopTimer() {
 }
 
 function search() {
-    const songName = document.getElementById("song-name").value
+    const songNameElm = document.getElementById("song-name")
     for (let i = 0; i < musicsData.length; i++) {
-        if (musicsData[i].title === songName) {
+        const songName = songNameElm.value
+        if (musicsData[i].title === songName.normalize("NFKC")) {
             // musicsData書き換え
             musicsData[i].found = true
             const title = musicsData[i].title
@@ -44,8 +54,13 @@ function search() {
 
             // songs-area書き換え
             const se = document.getElementById("songs-area")
-            se.children[i].setAttribute("src", jacket)
-            se.children[i].scrollIntoView({ behavior: "smooth" })
+            for (let j = 0; j < se.children.length; j++) {
+                if (se.children[j].getAttribute("data-title") === title) {
+                    se.children[j].setAttribute("src", jacket)
+                    se.children[j].scrollIntoView({ behavior: "smooth" })
+                    break
+                }
+            }
 
             // 正解数書き換え
             const foundMusics = musicsData.filter((m) => m.found).length
@@ -53,7 +68,7 @@ function search() {
             document.getElementById("found-percentage").textContent = (foundMusics / musicsData.length * 100).toFixed(2)
 
             // inputリセット
-            document.getElementById("song-name").value = ""
+            songNameElm.value = ""
 
             // 全曲発見したらタイマー停止
             if (foundMusics === musicsData.length) {
@@ -63,6 +78,14 @@ function search() {
             break
         }
     }
+
+    // ハズレ
+    songNameElm.style.backgroundColor = "rgba(255, 0, 0, 0.7)"
+    songNameElm.style.color = "white"
+    setTimeout(() => {
+        songNameElm.style.backgroundColor = "white"
+        songNameElm.style.color = "black"
+    }, 300)
 }
 
 const inputArea = () => div(
@@ -112,6 +135,60 @@ const displayArea = () => div(
     progress()
 )
 
+function rewriteSongsArea() {
+    const se = document.getElementById("songs-area")
+    while (se.firstChild) {
+        se.removeChild(se.firstChild)
+    }
+    for (let i = 0; i < musicsData.length; i++) {
+        se.appendChild(
+            img(
+                {
+                    class: "music-jacket",
+                    "data-title": musicsData[i].title,
+                    "data-artist": musicsData[i].artist,
+                    "data-reading" : musicsData[i].reading,
+                    src: musicsData[i].jacket,
+                }
+            )
+        )
+    }
+}
+
+const hintButtons = () => div(
+    { class: "hint-buttons" },
+    button(
+        {
+            id: "order-name",
+            onclick: () => {
+                musicsData.sort((a, b) => a.title.localeCompare(b.title))
+                rewriteSongsArea()
+            },
+        },
+        "曲名順"
+    ),
+    button(
+        {
+            id: "order-release",
+            onclick: () => {
+                musicsData.sort((a, b) => a.release - b.release)
+                rewriteSongsArea()
+            },
+        },
+        "登場順"
+    ),
+    button(
+        {
+            id: "order-level",
+            onclick: () => {
+                musicsData.sort((a, b) => a.lev_mas - b.lev_mas)
+                rewriteSongsArea()
+            },
+        },
+        "MASTER定数順"
+    )
+)
+
 const songsArea = () => {
     let songs = []
     for (let i = 0; i < musicsData.length; i++) {
@@ -121,6 +198,7 @@ const songsArea = () => {
                     class: "music-jacket",
                     "data-title": musicsData[i].title,
                     "data-artist": musicsData[i].artist,
+                    "data-reading" : musicsData[i].reading,
                     src: musicsData[i].jacket,
                 }
             )
@@ -136,6 +214,7 @@ const app = section(
     { id: "main-play-area" },
     inputArea(),
     displayArea(),
+    hintButtons(),
     songsArea()
 )
 
