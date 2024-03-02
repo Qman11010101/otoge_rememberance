@@ -7,7 +7,7 @@ const musicsData = musicsDataRaw.map((m) => {
     return m.meta.genre === "ORIGINAL" || m.meta.genre === "イロドリミドリ" ? {
         title: m.meta.title,
         artist: m.meta.artist,
-        jacket: "../../../commonassets/img/unknown.png",
+        jacket: "../../commonassets/img/unknown.png",
         lev_mas: m.data.MAS.const,
         found: false
     } : null
