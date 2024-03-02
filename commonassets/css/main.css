@@ -73,3 +73,20 @@ button {
         transition-duration: .2s;
     }
 }
+
+.songs-area {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+    gap: 10px;
+    background-color: #fff;
+    width: 100%;
+}
+
+.music-jacket {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+}
